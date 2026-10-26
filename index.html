@@ -60,7 +60,7 @@ nav ul a.cta{opacity:1;border-bottom:1px solid var(--accent);padding-bottom:4px}
 .frame{position:relative}
 .frame img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 40%;display:block}
 .frame::before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--accent);z-index:-1}
-.frame figcaption{margin-top:30px;font-family:var(--serif);font-style:italic;font-size:.95rem;opacity:.7}
+.frame figcaption{display:block;width:100%;text-align:center;margin-top:36px;font-family:var(--serif);font-style:italic;font-size:.95rem;opacity:.7}
 .letter h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.4rem,4.6vw,4.2rem);line-height:1.05;margin:22px 0 34px}
 .letter h2 em{color:var(--accent)}
 .letter p{max-width:46ch;margin-bottom:18px;font-size:1.05em}
@@ -89,6 +89,7 @@ nav ul a.cta{opacity:1;border-bottom:1px solid var(--accent);padding-bottom:4px}
 .row .t.tbd small{display:block;font-family:var(--sans);font-style:normal;font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink);opacity:.55;margin-top:8px}
 .row h3{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,2.4vw,2rem);font-style:italic}
 .row p{opacity:.75}
+.row p.sub{margin-top:6px}
 .place{display:grid;grid-template-columns:1fr 1.25fr;margin-top:80px;background:var(--ink);color:var(--paper)}
 .place .txt{padding:clamp(40px,5vw,70px)}
 .place h3{font-family:var(--serif);font-weight:300;font-size:clamp(2.2rem,3.8vw,3.2rem);line-height:1.05;margin:18px 0}
@@ -202,7 +203,7 @@ footer p{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;opacity:.4
   .hero .bar .rule{display:none}
   .hero .bar .eyebrow:first-child{text-align:center}
   .letter,.cols,.place{grid-template-columns:1fr}
-  .frame{max-width:440px;margin:0 auto 20px;width:92%}
+  .frame{max-width:420px;margin:0 auto 20px;width:86%;transform:translateX(-9px)}
   .row{grid-template-columns:1fr;gap:8px}
   .adult{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:60px}
   .mapart{min-height:300px}
@@ -276,7 +277,7 @@ footer p{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;opacity:.4
 <section id="programa"><div class="wrap">
   <div class="head rv"><span class="num">03</span><h2>El <em>programa</em></h2><span class="rule"></span></div>
   <div class="row rv"><div class="t tbd">Horario por confirmar<small>Te avisaremos pronto</small></div><div><h3>Ceremonia civil</h3><p>El momento en que todo se vuelve oficial. Muy pronto te compartiremos la hora; te pedimos llegar 15 minutos antes.</p></div></div>
-  <div class="row last rv"><div class="t">5:00<sup>PM</sup></div><div><h3>Recepción y fiesta</h3><p>Brindis, cena y baile hasta que el frío nos obligue a abrazarnos.</p></div></div>
+  <div class="row last rv"><div class="t">5:00<sup>PM</sup></div><div><h3>Recepción y fiesta</h3><p>Brindis, cena y baile hasta que el frío nos obligue a abrazarnos.</p><p class="sub">6:00 – 7:00 pm · Show Pasta</p><p class="sub">5:30 – 9:30 pm · Coctelería</p></div></div>
   <div class="place rv">
     <div class="txt">
       <span class="eyebrow" style="color:var(--accent)">El lugar</span>
