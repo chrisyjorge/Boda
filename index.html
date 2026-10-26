@@ -151,6 +151,9 @@ body.locked{overflow:hidden}
 .choice label{padding:20px 10px;text-align:center;cursor:pointer;font-family:var(--serif);font-size:1.15rem;transition:.4s var(--ease)}
 .choice label+label{border-left:1px solid var(--pline2)}
 .choice input{display:none}
+.choice.tri{grid-template-columns:repeat(3,1fr)}
+.choice.tri label{font-size:1rem}
+@media(max-width:700px){.choice.tri{grid-template-columns:1fr}.choice.tri label+label{border-left:0;border-top:1px solid var(--pline2)}}
 .choice label.on{background:var(--paper);color:var(--ink)}
 .form .btn{width:100%;justify-content:center;padding:20px}
 .deadline{text-align:center;margin-top:22px;font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;opacity:.55}
@@ -317,9 +320,9 @@ footer p{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;opacity:.4
       <span class="eyebrow">Una petición especial</span>
       <h3>Celebración <em>solo para adultos</em></h3>
       <p>Queremos que esta noche sea tranquila y que tú también la disfrutes sin pendientes. Por eso, <strong>el evento es exclusivamente para personas mayores de 18 años</strong>.</p>
-      <p><strong>No podremos recibir a niñas, niños ni bebés</strong>, incluyendo a los más pequeños de la familia. Esta invitación es <strong>personal e intransferible</strong> y no incluye acompañantes.</p>
+      <p><strong>No podremos recibir a niñas, niños ni bebés</strong>, incluyendo a los más pequeños de la familia. <span id="pxTxt">Esta invitación es <strong>personal e intransferible</strong> y no incluye acompañantes.</span></p>
       <p>Sabemos que puede requerir organizarte, y te lo agradecemos de corazón.</p>
-      <div class="pass"><b>01</b><div><span class="eyebrow">Pase personal</span><br><span style="opacity:.7">Válido para una persona</span></div></div>
+      <div class="pass"><b id="pxN">01</b><div><span class="eyebrow" id="pxT">Pase personal</span><br><span style="opacity:.7" id="pxD">Válido para una persona</span></div></div>
     </div>
   </div>
 </div></section>
@@ -332,6 +335,7 @@ footer p{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;opacity:.4
     <div id="fill">
       <label class="l" for="nom">Tu nombre</label>
       <input type="text" id="nom" placeholder="Escríbelo aquí" autocomplete="name">
+      <input type="text" id="acomp" placeholder="Nombre de tu acompañante" autocomplete="off" style="display:none;font-size:1.3rem;margin-top:18px">
       <div class="choice" id="choice">
         <label class="on"><input type="radio" name="a" value="Sí, ahí estaré" checked>Sí, ahí estaré</label>
         <label><input type="radio" name="a" value="No podré asistir">No podré asistir</label>
@@ -361,25 +365,44 @@ footer p{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;opacity:.4
 const RSVP_URL = "https://script.google.com/macros/s/AKfycbx0LGga2zldIkc1Fj7cQ6jePOkrltFNln2vQekOvKSWzUfTYh5_CAiscQmNZmdA-54nIA/exec";
 /* ============================================================== */
 const $=id=>document.getElementById(id);
+/* ===== PASES =====
+   Link normal  -> 1 persona:   https://chrisyjorge.github.io/Boda/
+   Link pareja  -> 2 personas:  https://chrisyjorge.github.io/Boda/?i=duo26   */
+const PASES = new URLSearchParams(location.search).get("i")==="duo26" ? 2 : 1;
+if(PASES===2){
+  $("pxN").textContent="02";$("pxT").textContent="Pase para dos";$("pxD").textContent="Válido para dos personas";
+  $("pxTxt").innerHTML='Esta invitación es <strong>válida para dos personas</strong>: tú y tu acompañante. Es <strong>intransferible</strong> y no incluye personas adicionales.';
+  const c=$("choice");c.classList.add("tri");
+  c.innerHTML='<label class="on"><input type="radio" name="a" value="Sí, asistiremos los dos (2 personas)" checked>Sí, iremos los dos</label>'+
+              '<label><input type="radio" name="a" value="Sí, solo asistiré yo (1 persona)">Solo asistiré yo</label>'+
+              '<label><input type="radio" name="a" value="No podremos asistir">No podremos asistir</label>';
+  $("acomp").style.display="block";
+}
 const T=new Date("2026-12-05T16:00:00-06:00").getTime(),p=n=>String(n).padStart(2,"0");
 function tick(){let x=Math.max(0,T-Date.now());$("cd").textContent=p(Math.floor(x/864e5));$("ch").textContent=p(Math.floor(x%864e5/36e5));$("cm").textContent=p(Math.floor(x%36e5/6e4));$("cs").textContent=p(Math.floor(x%6e4/1e3));}
 tick();setInterval(tick,1000);
 
 document.querySelectorAll("#choice input").forEach(r=>r.addEventListener("change",()=>{document.querySelectorAll("#choice label").forEach(l=>l.classList.toggle("on",l.querySelector("input").checked));}));
+document.getElementById("choice").addEventListener("change",()=>{document.querySelectorAll("#choice label").forEach(l=>l.classList.toggle("on",l.querySelector("input").checked));
+  if(PASES===2){const v=document.querySelector('input[name=a]:checked').value;$("acomp").style.display=v.indexOf("(2 personas)")>-1?"block":"none";}});
 $("go").addEventListener("click",async()=>{
   const nom=$("nom"),n=nom.value.trim();if(!n){nom.focus();nom.placeholder="Escribe tu nombre, por favor";return;}
   const a=document.querySelector('input[name=a]:checked').value;
   const si=a.startsWith("Sí");
+  const ac=$("acomp").value.trim();
+  const dos=a.indexOf("(2 personas)")>-1;
+  if(dos&&!ac){$("acomp").focus();$("acomp").placeholder="Escribe el nombre de tu acompañante";return;}
+  const nomEnv=dos?`${n} + ${ac}`:n;
   const btn=$("go");btn.disabled=true;btn.textContent="Enviando…";
   let ok=true;
   try{
-    await fetch(RSVP_URL,{method:"POST",mode:"no-cors",body:new URLSearchParams({nombre:n,respuesta:a,dispositivo:navigator.userAgent.slice(0,120)})});
+    await fetch(RSVP_URL,{method:"POST",mode:"no-cors",body:new URLSearchParams({nombre:nomEnv,respuesta:(PASES===1&&si?"Sí, ahí estaré (1 persona)":a),dispositivo:navigator.userAgent.slice(0,120)})});
   }catch(e){ok=false;}
   btn.disabled=false;btn.textContent="Enviar confirmación";
   if(!ok){alert("No pudimos enviar tu respuesta. Revisa tu conexión e inténtalo de nuevo.");return;}
   $("fill").style.display="none";$("steps").classList.add("show");
   $("ty").textContent="¡Gracias! Tu respuesta ya nos llegó.";
-  $("tymsg").textContent=si?`${n}, nos hace muy felices saber que estarás con nosotros. ¡Nos vemos el 5 de diciembre!`:`${n}, gracias por avisarnos. Te vamos a extrañar y te llevamos en el corazón.`;
+  $("tymsg").textContent=si?`${n}, nos hace muy felices saber que ${dos?"estarán":"estarás"} con nosotros. ¡Nos vemos el 5 de diciembre!`:`${n}, gracias por avisarnos. Te vamos a extrañar y te llevamos en el corazón.`;
 });
 $("edit").addEventListener("click",()=>{$("steps").classList.remove("show");$("fill").style.display="block";});
 
